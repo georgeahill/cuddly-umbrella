@@ -51,7 +51,7 @@ def wordcloud_no_mask():
 
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
+    img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
 
     return img_str
 
@@ -84,6 +84,6 @@ def wordcloud_mask():
 
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
+    img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
 
     return img_str
