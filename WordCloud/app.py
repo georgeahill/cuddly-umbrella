@@ -42,7 +42,8 @@ def wordcloud_no_mask():
     cloud = WordCloud(width=400,
                       height=330,
                       max_words=150,
-                      colormap='tab20c',
+                      colormap='cool',
+                      background_color='#282828',
                       stopwords=stopwords,
                       collocations=True).generate_from_text(cleanedInput)
 
@@ -50,7 +51,7 @@ def wordcloud_no_mask():
 
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
+    img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
 
     return img_str
 
@@ -83,6 +84,6 @@ def wordcloud_mask():
 
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
-    img_str = base64.b64encode(buffered.getvalue())
+    img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
 
     return img_str
