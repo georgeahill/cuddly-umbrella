@@ -26,10 +26,18 @@ def wordcloud_no_mask():
     #get the data from the POST command and store into a variable
     data = request.get_json()
     wikitext = data["wikitext"]
+    if "image_width" in data:
+        imagewidth = data["image_width"]
+    else:
+        imagewidth = 500
+    if "image_height" in data:
+        imageheight = data["image_height"]
+    else:
+        imageheight = 500
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               [',.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
@@ -39,8 +47,8 @@ def wordcloud_no_mask():
 
 
     #generate the word cloud from text
-    cloud = WordCloud(width=400,
-                      height=330,
+    cloud = WordCloud(width=imagewidth,
+                      height=imageheight,
                       max_words=150,
                       colormap='cool',
                       background_color='#282828',
@@ -65,10 +73,18 @@ def wordcloud_mask():
     data = request.get_json()
     wikitext = data["wikitext"]
     mask = data["mask"]
+    if "image_width" in data:
+        imagewidth = data["image_width"]
+    else:
+        imagewidth = 500
+    if "image_height" in data:
+        imageheight = data["image_height"]
+    else:
+        imageheight = 500
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               [',.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
@@ -78,13 +94,13 @@ def wordcloud_mask():
     colors = ImageColorGenerator(mask)
 
     #generate the word cloud from text
-    cloud = WordCloud(width=400,
-                    height=330,
+    cloud = WordCloud(width=imagewidth,
+                    height=imageheight,
                     max_words = 50,
                     stopwords = stopwords,
                     mask=mask,
                     background_color='white',
-                    color_func=colors).generate_from_text(data)
+                    color_func=colors).generate_from_text(cleanedInput)
 
     #Put this into an image file
     im = Image.fromarray(cloud.to_array())

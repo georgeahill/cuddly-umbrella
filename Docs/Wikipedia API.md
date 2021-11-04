@@ -6,7 +6,7 @@ root is `https://en.wikipedia.org/w/rest.php/v1`
 ## Page search
 `/search/page?q={search query}&limit={Limit (1)}`
 
-**Returns:** 
+### Returns:
 ```json
 {
   "id": 38930,
