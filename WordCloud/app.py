@@ -26,6 +26,8 @@ def wordcloud_no_mask():
     #get the data from the POST command and store into a variable
     data = request.get_json()
     wikitext = data["wikitext"]
+    imagewidth = data["image_width"]
+    imageheight = data["image_height"]
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
@@ -39,8 +41,8 @@ def wordcloud_no_mask():
 
 
     #generate the word cloud from text
-    cloud = WordCloud(width=400,
-                      height=330,
+    cloud = WordCloud(width=imagewidth,
+                      height=imageheight,
                       max_words=150,
                       colormap='cool',
                       background_color='#282828',
@@ -65,6 +67,8 @@ def wordcloud_mask():
     data = request.get_json()
     wikitext = data["wikitext"]
     mask = data["mask"]
+    imagewidth = data["image_width"]
+    imageheight = data["image_height"]
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
@@ -78,8 +82,8 @@ def wordcloud_mask():
     colors = ImageColorGenerator(mask)
 
     #generate the word cloud from text
-    cloud = WordCloud(width=400,
-                    height=330,
+    cloud = WordCloud(width=imagewidth,
+                    height=imageheight,
                     max_words = 50,
                     stopwords = stopwords,
                     mask=mask,
