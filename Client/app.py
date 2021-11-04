@@ -11,8 +11,7 @@ app.config['SECRET_KEY'] = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA '
 @app.route("/", methods=["POST", "GET"])
 def index(page=None):
     if request.method == "POST":
-        print(request.form.to_dict())
-        return redirect("/" + "dog")
+        return redirect("/" + request.form.get('query'))
     
     if page is None:
         # "/"
@@ -23,9 +22,14 @@ def index(page=None):
     try:
         page_obj = r.json()["pages"][0]
     except:
-        pass
+        return render_template('index.html', error="Page not found boo! Try again xoxo")
 
     page_title = page_obj['key']
+    
+    if page_obj['description'] is None:
+        page_obj['description'] = page_obj['excerpt'] + "..."
+    if page_obj['description'] is None:
+        page_obj['description'] = "<em>Description not available</em>"
 
     r = requests.get(f"https://en.wikipedia.org/w/rest.php/v1/page/{page_title}")
 
@@ -53,14 +57,16 @@ def index(page=None):
     # Call Ben's API with wikipedia
 
     try:
-        r = requests.post("http://localhost:5000", data={"data": text})
-        image_data = r.json()["image"]
+        r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
+        image_data = r.text
         error = None
+
+    
     except:
         image_data = None
         error = "Something went wrong generating the wordcloud"
 
-    return render_template("index.html", image_data=image_data, error=error)
+    return render_template("index.html", image_data=image_data, error=error, page=page_obj)
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port="8080", debug=True)

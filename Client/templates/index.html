@@ -20,25 +20,27 @@
 <body>
     <div class="container">
         <h1>WikiCloud Summary Tool</h1>
-        {% if image_data %}
-
-        {% else %}
-        <p>
-            To use this tool, please add a search query below!
-        </p>
-        <div class="container"></div>
-
-
+        
         <form action="/" method="POST">
             <div class="form-group">
-                <label for="query">Email address</label>
-                <input type="query" class="form-control" id="query" name="query" placeholder="Wikipedia search query">
+                <label for="query">Wikipedia Search Query</label>
+                <input type="query" class="form-control" id="query" name="query" placeholder="Wikipedia Search Query">
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+
+        {% if image_data %}
+
+        <a href="https://en.wikipedia.org/wiki/{{ page.key }}"><h2>{{ page.title }}</h2></a>
+        <p>{{ page.description | safe }}</p>
+        <img src="{{image_data}}" />
+        {% else %}
+        <small>
+            To use this tool, please add a search query above!
+        </small>
         {% endif %}
 
-        <div class="container"></div>
+
 
         {% if error %}
         <div class="alert alert-danger" role="alert">
