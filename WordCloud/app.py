@@ -37,7 +37,7 @@ def wordcloud_no_mask():
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               [',.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
@@ -84,7 +84,7 @@ def wordcloud_mask():
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               [',.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
