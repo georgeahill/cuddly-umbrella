@@ -42,7 +42,8 @@ def wordcloud_no_mask():
     cloud = WordCloud(width=400,
                       height=330,
                       max_words=150,
-                      colormap='tab20c',
+                      colormap='cool',
+                      background_color='#282828',
                       stopwords=stopwords,
                       collocations=True).generate_from_text(cleanedInput)
 
