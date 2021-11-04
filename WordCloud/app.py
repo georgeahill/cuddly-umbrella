@@ -6,25 +6,8 @@ import base64
 from io import BytesIO
 
 
-app = Flask(__name__)
-
-@app.route("/", methods = ["POST"])
-def index():
-    data = request.get_json()
-    print(data)
-
-    data1 = "I am tired! I don't like fruit...and milk"
-
-    cleanedInput = re.sub(r"""
-               [,.;@#?!&$]+  # Accept one or more copies of punctuation
-               \ *           # plus zero or more copies of a space,
-               """,
-               " ",          # and replace it with a single space
-               data1, flags=re.VERBOSE)
-
-
-    #Define a list of stop words
-    stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 
+#Define a list of stop words
+stopwords = ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 
     'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 
     'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what',
     'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were',
@@ -36,6 +19,25 @@ def index():
     'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than',
     'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now']
 
+app = Flask(__name__)
+
+@app.route("/no_mask", methods = ["POST"])
+def wordcloud_no_mask():
+    data = request.get_json()
+    print(data)
+
+    wikitext = data["wikitext"]
+
+    cleanedInput = re.sub(r"""
+               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               \ *           # plus zero or more copies of a space,
+               """,
+               " ",          # and replace it with a single space
+               wikitext, flags=re.VERBOSE)
+
+
+
+
     #generate the word cloud from text
     cloud = WordCloud(width=400,
                       height=330,
@@ -43,6 +45,39 @@ def index():
                       colormap='tab20c',
                       stopwords=stopwords,
                       collocations=True).generate_from_text(cleanedInput)
+
+    im = Image.fromarray(cloud.to_array())
+
+    buffered = BytesIO()
+    im.save(buffered, format="JPEG")
+    img_str = base64.b64encode(buffered.getvalue())
+
+    return img_str
+
+@app.route("/mask", methods = ["POST"])
+def wordcloud_mask():
+    data = request.get_json()
+    print(data)
+
+    wikitext = data["wikitext"]
+    mask = data["mask"]
+
+    cleanedInput = re.sub(r"""
+               [,.;@#?!&$]+  # Accept one or more copies of punctuation
+               \ *           # plus zero or more copies of a space,
+               """,
+               " ",          # and replace it with a single space
+               wikitext, flags=re.VERBOSE)
+
+    colors = ImageColorGenerator(mask)
+
+    cloud = WordCloud(width=400,
+                    height=330,
+                    max_words = 50,
+                    stopwords = stopwords,
+                    mask=mask,
+                    background_color='white',
+                    color_func=colors).generate_from_text(data)
 
     im = Image.fromarray(cloud.to_array())
 
