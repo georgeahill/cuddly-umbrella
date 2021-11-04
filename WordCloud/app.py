@@ -26,8 +26,14 @@ def wordcloud_no_mask():
     #get the data from the POST command and store into a variable
     data = request.get_json()
     wikitext = data["wikitext"]
-    imagewidth = data["image_width"]
-    imageheight = data["image_height"]
+    if "image_width" in data:
+        imagewidth = data["image_width"]
+    else:
+        imagewidth = 500
+    if "image_height" in data:
+        imageheight = data["image_height"]
+    else:
+        imageheight = 500
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
@@ -67,8 +73,14 @@ def wordcloud_mask():
     data = request.get_json()
     wikitext = data["wikitext"]
     mask = data["mask"]
-    imagewidth = data["image_width"]
-    imageheight = data["image_height"]
+    if "image_width" in data:
+        imagewidth = data["image_width"]
+    else:
+        imagewidth = 500
+    if "image_height" in data:
+        imageheight = data["image_height"]
+    else:
+        imageheight = 500
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
