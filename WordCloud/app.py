@@ -100,7 +100,7 @@ def wordcloud_mask():
                     stopwords = stopwords,
                     mask=mask,
                     background_color='white',
-                    color_func=colors).generate_from_text(data)
+                    color_func=colors).generate_from_text(cleanedInput)
 
     #Put this into an image file
     im = Image.fromarray(cloud.to_array())
