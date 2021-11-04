@@ -1,7 +1,6 @@
 from flask import Flask, request
 import re
 from wordcloud import WordCloud, ImageColorGenerator
-import matplotlib.pyplot as plt
 from PIL import Image
 import base64
 from io import BytesIO
@@ -50,14 +49,5 @@ def index():
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
     img_str = base64.b64encode(buffered.getvalue())
-    
-
-    # plt.figure(figsize=(10,8))
-    # plt.imshow(cloud)
-    # plt.axis('off')
-    # plt.title("Wordcloud", fontsize=13)
-    # plt.savefig('fig.png')
-
-
 
     return img_str
