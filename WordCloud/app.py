@@ -23,11 +23,11 @@ app = Flask(__name__)
 
 @app.route("/no_mask", methods = ["POST"])
 def wordcloud_no_mask():
+    #get the data from the POST command and store into a variable
     data = request.get_json()
-    print(data)
-
     wikitext = data["wikitext"]
 
+    #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
                [,.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
@@ -47,22 +47,25 @@ def wordcloud_no_mask():
                       stopwords=stopwords,
                       collocations=True).generate_from_text(cleanedInput)
 
+    #Put this into an image file
     im = Image.fromarray(cloud.to_array())
 
+    #convert the image into a base64 string
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
-    img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
+    img_str = "data:image/png;base64, " + str(base64.b64encode(buffered.getvalue()))
 
+    #return this string to the client
     return img_str
 
 @app.route("/mask", methods = ["POST"])
 def wordcloud_mask():
+    #get the data from the POST command and store into variables
     data = request.get_json()
-    print(data)
-
     wikitext = data["wikitext"]
     mask = data["mask"]
 
+    #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
                [,.;@#?!&$]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
@@ -70,8 +73,10 @@ def wordcloud_mask():
                " ",          # and replace it with a single space
                wikitext, flags=re.VERBOSE)
 
+    #create a variable to store the colourway from the image mask
     colors = ImageColorGenerator(mask)
 
+    #generate the word cloud from text
     cloud = WordCloud(width=400,
                     height=330,
                     max_words = 50,
@@ -80,10 +85,13 @@ def wordcloud_mask():
                     background_color='white',
                     color_func=colors).generate_from_text(data)
 
+    #Put this into an image file
     im = Image.fromarray(cloud.to_array())
 
+    #convert the image into a base64 string
     buffered = BytesIO()
     im.save(buffered, format="JPEG")
     img_str = "data:image/png;base64, " + base64.b64encode(buffered.getvalue())
 
+    #return this string to the client
     return img_str
