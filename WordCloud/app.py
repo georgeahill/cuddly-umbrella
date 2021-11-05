@@ -95,7 +95,8 @@ def wordcloud_mask():
     colors = ImageColorGenerator(mask)
 
     #generate the word cloud from text
-    cloud = WordCloud(width=imagewidth,
+    cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
+                    width=imagewidth,
                     height=imageheight,
                     max_words = 50,
                     stopwords = stopwords,
