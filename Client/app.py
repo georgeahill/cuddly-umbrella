@@ -57,7 +57,7 @@ def index(page=None):
     # Call Ben's API with wikipedia
 
     try:
-        r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
+        r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text, "image_width": 800, "image_height": 300})
         image_data = r.text
         error = None
 

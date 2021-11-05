@@ -4,6 +4,7 @@ from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
 import base64
 from io import BytesIO
+import os
 
 
 #Define a list of stop words
@@ -47,7 +48,8 @@ def wordcloud_no_mask():
 
 
     #generate the word cloud from text
-    cloud = WordCloud(width=imagewidth,
+    cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
+                    width=imagewidth,
                       height=imageheight,
                       max_words=150,
                       colormap='cool',
