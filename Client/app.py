@@ -6,6 +6,10 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA '
 
+@app.route("/favicon.ico")
+def favicon():
+    return "go away", 404
+
 
 @app.route("/<string:page>")
 @app.route("/", methods=["POST", "GET"])
@@ -23,6 +27,8 @@ def index(page=None):
         page_obj = r.json()["pages"][0]
     except:
         return render_template('index.html', error="Page not found boo! Try again xoxo")
+
+    # image = requests.get('http:' + page_obj['thumbnail']['url']).content
 
     page_title = page_obj['key']
     
@@ -57,11 +63,17 @@ def index(page=None):
     # Call Ben's API with wikipedia
 
     try:
-        r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
+        if image:
+            r = requests.post("http://localhost:5001/", files={"data": image})
+            # reconcile formats here
+            image_data_raw = r.json()['mask']
+            image_data_clean = [[cell, cell, cell] for row in image_data_raw for cell in row]
+
+            r = requests.post("http://localhost:5000/mask", json={"wikitext": text, "mask": image_data_clean})
+        else:
+            r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
         image_data = r.text
         error = None
-
-    
     except:
         image_data = None
         error = "Something went wrong generating the wordcloud"

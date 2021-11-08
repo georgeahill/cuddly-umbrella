@@ -4,6 +4,7 @@ from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
 import base64
 from io import BytesIO
+import numpy as np
 
 
 #Define a list of stop words
@@ -71,7 +72,7 @@ def wordcloud_mask():
     #get the data from the POST command and store into variables
     data = request.get_json()
     wikitext = data["wikitext"]
-    mask = data["mask"]
+    mask = np.array(data["mask"])
     if "image_width" in data:
         imagewidth = data["image_width"]
     else:
