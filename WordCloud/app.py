@@ -35,6 +35,10 @@ def wordcloud_no_mask():
         imageheight = data["image_height"]
     else:
         imageheight = 500
+    if "max_words" in data:
+        max_words = data["max_words"]
+    else:
+        max_words = 100
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
@@ -51,7 +55,7 @@ def wordcloud_no_mask():
     cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
                     width=imagewidth,
                       height=imageheight,
-                      max_words=150,
+                      max_words=max_words,
                       colormap='cool',
                       background_color='#282828',
                       stopwords=stopwords,
@@ -83,6 +87,10 @@ def wordcloud_mask():
         imageheight = data["image_height"]
     else:
         imageheight = 500
+    if "max_words" in data:
+        max_words = data["max_words"]
+    else:
+        max_words = 100
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
@@ -99,7 +107,7 @@ def wordcloud_mask():
     cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
                     width=imagewidth,
                     height=imageheight,
-                    max_words = 50,
+                    max_words = max_words,
                     stopwords = stopwords,
                     mask=mask,
                     background_color='white',
