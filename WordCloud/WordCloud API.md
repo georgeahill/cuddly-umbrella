@@ -17,6 +17,8 @@ string containing WordCloud image in Base64 format
 
 **image_height** - The height (in pixels) of the wordcloud to return (default 500)
 
+**max_words** - The max number of words to show in the wordcloud (default 100)
+
 #
 ## WordCloud with mask
 `/mask`
@@ -33,3 +35,5 @@ string containing WordCloud image in Base64 format
 **image_width** - The width (in pixels) of the wordcloud to return (default 500)
 
 **image_height** - The height (in pixels) of the wordcloud to return (default 500)
+
+**max_words** - The max number of words to show in the wordcloud (default 100)

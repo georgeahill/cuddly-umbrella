@@ -5,6 +5,7 @@ from PIL import Image
 import base64
 from io import BytesIO
 import numpy as np
+import os
 
 
 #Define a list of stop words
@@ -35,26 +36,32 @@ def wordcloud_no_mask():
         imageheight = data["image_height"]
     else:
         imageheight = 500
+    if "max_words" in data:
+        max_words = data["max_words"]
+    else:
+        max_words = 100
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [',.;@#?!&$]+  # Accept one or more copies of punctuation
+               [–()-/*'",.;@#?!&$\s]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
                wikitext, flags=re.VERBOSE)
 
-
+    print(cleanedInput)
 
 
     #generate the word cloud from text
-    cloud = WordCloud(width=imagewidth,
+    cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
+                    width=imagewidth,
                       height=imageheight,
-                      max_words=150,
+                      max_words=max_words,
                       colormap='cool',
                       background_color='#282828',
                       stopwords=stopwords,
-                      collocations=True).generate_from_text(cleanedInput)
+                      collocations=False,
+                      min_word_length=2).generate_from_text(cleanedInput)
 
     #Put this into an image file
     im = Image.fromarray(cloud.to_array())
@@ -81,10 +88,14 @@ def wordcloud_mask():
         imageheight = data["image_height"]
     else:
         imageheight = 500
+    if "max_words" in data:
+        max_words = data["max_words"]
+    else:
+        max_words = 100
 
     #Clean the input of any punctuation and put into a string separated by single spaces
     cleanedInput = re.sub(r"""
-               [',.;@#?!&$]+  # Accept one or more copies of punctuation
+               [–()-/*'",.;@#?!&$\s]+  # Accept one or more copies of punctuation
                \ *           # plus zero or more copies of a space,
                """,
                " ",          # and replace it with a single space
@@ -94,13 +105,16 @@ def wordcloud_mask():
     colors = ImageColorGenerator(mask)
 
     #generate the word cloud from text
-    cloud = WordCloud(width=imagewidth,
+    cloud = WordCloud(font_path=os.getcwd() + '/Avenir Regular/Avenir Regular.ttf',
+                    width=imagewidth,
                     height=imageheight,
-                    max_words = 50,
+                    max_words = max_words,
                     stopwords = stopwords,
                     mask=mask,
                     background_color='white',
-                    color_func=colors).generate_from_text(cleanedInput)
+                    color_func=colors,
+                    collocations=False,
+                    min_word_length=2).generate_from_text(cleanedInput)
 
     #Put this into an image file
     im = Image.fromarray(cloud.to_array())
