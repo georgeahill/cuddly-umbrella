@@ -15,6 +15,16 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
 
+    <style>
+        svg {
+            width: 100%;
+        }
+
+        svg rect {
+            display: none;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -33,7 +43,13 @@
 
         <a href="https://en.wikipedia.org/wiki/{{ page.key }}"><h2>{{ page.title }}</h2></a>
         <p>{{ page.description | safe }}</p>
-        <img src="{{image_data}}" />
+        <div style="position: relative">
+            <span width="50%" style="position: absolute; left: 0; z-index: 1;">
+                {{image_data | safe}}
+            </span>
+            <!-- <img src="{{image_data}}" width="50%" style="position: absolute; left: 0; z-index: 1;" /> -->
+            <img src="{{source_image_data}}" style="position: absolute; left: 0;" />
+        </div>
         {% else %}
         <small>
             To use this tool, please add a search query above!

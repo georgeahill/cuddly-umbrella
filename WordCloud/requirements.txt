@@ -1,3 +1,4 @@
 flask-restful
 wordcloud
 pillow
+fontTools

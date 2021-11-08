@@ -2,9 +2,11 @@ from flask import Flask, render_template, request, redirect, url_for
 import requests
 from bs4 import BeautifulSoup
 import re
+
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA '
+app.config["SECRET_KEY"] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "
+
 
 @app.route("/favicon.ico")
 def favicon():
@@ -15,36 +17,43 @@ def favicon():
 @app.route("/", methods=["POST", "GET"])
 def index(page=None):
     if request.method == "POST":
-        return redirect("/" + request.form.get('query'))
-    
+        return redirect("/" + request.form.get("query"))
+
     if page is None:
         # "/"
         return render_template("index.html")
 
     # Call wikipedia - get text
-    r = requests.get(f"https://en.wikipedia.org/w/rest.php/v1/search/page?q={page}&limit=1")
+    r = requests.get(
+        f"https://en.wikipedia.org/w/rest.php/v1/search/page?q={page}&limit=1"
+    )
     try:
         page_obj = r.json()["pages"][0]
     except:
-        return render_template('index.html', error="Page not found boo! Try again xoxo")
+        return render_template("index.html", error="Page not found boo! Try again xoxo")
 
-    # image = requests.get('http:' + page_obj['thumbnail']['url']).content
+    # get images
+    page_files = requests.get(
+        f"https://en.wikipedia.org/w/rest.php/v1/page/{page_obj['title']}/links/media"
+    )
 
-    page_title = page_obj['key']
-    
-    if page_obj['description'] is None:
-        page_obj['description'] = page_obj['excerpt'] + "..."
-    if page_obj['description'] is None:
-        page_obj['description'] = "<em>Description not available</em>"
+    image = requests.get("http:" + page_obj["thumbnail"]["url"]).content
+
+    page_title = page_obj["key"]
+
+    if page_obj["description"] is None:
+        page_obj["description"] = page_obj["excerpt"] + "..."
+    if page_obj["description"] is None:
+        page_obj["description"] = "<em>Description not available</em>"
 
     r = requests.get(f"https://en.wikipedia.org/w/rest.php/v1/page/{page_title}")
 
     source = r.json()["source"]
     soup = BeautifulSoup(source, features="html.parser")
-    
+
     # kill all script and style elements
     for script in soup(["script", "style"]):
-        script.extract()    # rip it out
+        script.extract()  # rip it out
 
     # get text
     text = soup.get_text()
@@ -54,11 +63,11 @@ def index(page=None):
     # break multi-headlines into a line each
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     # drop blank lines
-    text = '\n'.join(chunk for chunk in chunks if chunk)
+    text = "\n".join(chunk for chunk in chunks if chunk)
 
-    text = re.sub(r"\{\{.+\}\}", '', text)
-    text = re.sub(r"\[\[.+\]\]", '', text)
-    text = re.sub(r"==.+==", '', text)
+    text = re.sub(r"\{\{.+\}\}", "", text)
+    text = re.sub(r"\[\[.+\]\]", "", text)
+    text = re.sub(r"==.+==", "", text)
 
     # Call Ben's API with wikipedia
 
@@ -66,10 +75,18 @@ def index(page=None):
         if image:
             r = requests.post("http://localhost:5001/", files={"data": image})
             # reconcile formats here
-            image_data_raw = r.json()['mask']
-            image_data_clean = [[cell, cell, cell] for row in image_data_raw for cell in row]
+            image_data = r.json()["mask"]
+            # image_data_clean = [[cell, cell, cell] for row in image_data for cell in row]
 
-            r = requests.post("http://localhost:5000/mask", json={"wikitext": text, "mask": image_data_clean})
+            r = requests.post(
+                "http://localhost:5000/mask",
+                json={
+                    "wikitext": text,
+                    "mask": image_data,
+                    "image_width": page_obj["thumbnail"]["width"],
+                    "image_height": page_obj["thumbnail"]["height"],
+                },
+            )
         else:
             r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
         image_data = r.text
@@ -78,7 +95,14 @@ def index(page=None):
         image_data = None
         error = "Something went wrong generating the wordcloud"
 
-    return render_template("index.html", image_data=image_data, error=error, page=page_obj)
+    return render_template(
+        "index.html",
+        image_data=image_data,
+        source_image_data="http:" + page_obj["thumbnail"]["url"],
+        error=error,
+        page=page_obj,
+    )
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port="8080", debug=True)

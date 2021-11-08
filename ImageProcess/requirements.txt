@@ -1,2 +1,5 @@
 flask-restful
 opencv-python
+scipy
+numpy
+werkzeug
