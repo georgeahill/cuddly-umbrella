@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from flask.helpers import send_from_directory
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -10,7 +11,7 @@ app.config["SECRET_KEY"] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA "
 
 @app.route("/favicon.ico")
 def favicon():
-    return "go away", 404
+    return app.send_static_file("favicon.ico")
 
 
 @app.route("/<string:page>")
