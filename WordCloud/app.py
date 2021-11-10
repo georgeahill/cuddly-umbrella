@@ -173,8 +173,6 @@ def wordcloud_no_mask():
         flags=re.VERBOSE,
     )
 
-    print(cleanedInput)
-
     # generate the word cloud from text
     cloud = WordCloud(
         font_path=os.getcwd() + "/Avenir Regular/Avenir Regular.ttf",
