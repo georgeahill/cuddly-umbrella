@@ -38,11 +38,19 @@ def index(page=None):
         f"https://en.wikipedia.org/w/rest.php/v1/page/{page_obj['title']}/links/media"
     )
 
-    image_req = requests.get("http:" + page_obj["thumbnail"]["url"])
-    if image_req.status_code != 200:
-        image = None
+    if not page_obj:
+        return render_template("index.html", error="Page not found boo! Try again xoxo")
+
+    if "thumbnail" in page_obj and page_obj["thumbnail"] is not None and "url" in page_obj["thumbnail"]:
+        image_url = "http:" + page_obj["thumbnail"]["url"]
+        image_req = requests.get(image_url)
+        if image_req.status_code != 200:
+            image = None
+        else:
+            image = image_req.content
     else:
-        image = image_req.content
+        image_url = "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+        image = None
 
     page_title = page_obj["key"]
 
@@ -103,7 +111,7 @@ def index(page=None):
     return render_template(
         "index.html",
         image_data=image_data,
-        source_image_data="http:" + page_obj["thumbnail"]["url"],
+        source_image_data=image_url,
         error=error,
         page=page_obj,
     )
