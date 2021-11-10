@@ -189,17 +189,10 @@ def wordcloud_no_mask():
     ).generate_from_text(cleanedInput)
 
     # Put this into an image file
-    im = Image.fromarray(cloud.to_array())
-
-    # convert the image into a base64 string
-    buffered = BytesIO()
-    im.save(buffered, format="JPEG")
-    img_str = (
-        "data:image/png;base64," + str(base64.b64encode(buffered.getvalue()))[2:-1]
-    )
+    im = cloud.to_svg(embed_font=True)
 
     # return this string to the client
-    return img_str
+    return im
 
 
 @app.route("/mask", methods=["POST"])
