@@ -38,7 +38,11 @@ def index(page=None):
         f"https://en.wikipedia.org/w/rest.php/v1/page/{page_obj['title']}/links/media"
     )
 
-    image = requests.get("http:" + page_obj["thumbnail"]["url"]).content
+    image_req = requests.get("http:" + page_obj["thumbnail"]["url"])
+    if image_req.status_code != 200:
+        image = None
+    else:
+        image = image_req.content
 
     page_title = page_obj["key"]
 

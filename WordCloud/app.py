@@ -137,6 +137,8 @@ stopwords = [
     "don",
     "should",
     "now",
+    "www",
+    "http",
 ]
 
 app = Flask(__name__)

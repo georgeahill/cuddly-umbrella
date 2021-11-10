@@ -30,27 +30,57 @@
 
 <body>
     <div class="container">
-        <h1>WikiCloud Summary Tool</h1>
+        
+        <h1 class="mt-5 text-decoration-underline mb-5"><img src="/favicon.ico" style="display: inline-block" />WikiCloud Summary Tool</h1>
+
+        <script type="text/javascript">
+            function submitForm () {
+                document.getElementById("submit-spinner").style.display = 'inline-block';
+                document.getElementById("loading-text").style.display = 'inline-block';
+                document.getElementById("submit-text").style.display = 'none';
+                document.getElementById("submit-btn").setAttribute("disabled", "");
+
+                document.getElementsByTagName("form")[0].submit();
+            }
+        </script>
         
         <form action="/" method="POST">
             <div class="form-group">
-                <label for="query">Wikipedia Search Query</label>
-                <input type="query" class="form-control" id="query" name="query" placeholder="Wikipedia Search Query">
+                <input type="query" class="form-control form-control-lg" id="query" name="query" placeholder="Wikipedia Search Query">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary btn-block btn-lg mt-2 form-control" id="submit-btn" onclick="submitForm();">
+                <span class="spinner-border spinner-border-sm" id="submit-spinner" role="status" style="display: none;" aria-hidden="true"></span>
+                <span id="loading-text" style="display: none;">Loading...</span>
+                <span id="submit-text">Submit</span>
+            </button>
         </form>
 
         {% if image_data %}
 
         <a href="https://en.wikipedia.org/wiki/{{ page.key }}"><h2>{{ page.title }}</h2></a>
         <p>{{ page.description | safe }}</p>
+        <small>
+            Apologies for potentially low image quality! This is the best we can get from Wikipedia without significant extra effort. 
+        </small>
         <div style="position: relative">
-            <span width="50%" style="position: absolute; left: 0; z-index: 1;">
-                {{image_data | safe}}
+            <span width="100%" style="position: absolute; left: 0; z-index: 1; min-width: 100%;">
+                {% if image_data[:4] == "data" %}
+                    <img src="{{image_data}}" />
+                {% else %}
+                    {{ image_data | safe }}
+                {% endif %}
             </span>
-            <!-- <img src="{{image_data}}" width="50%" style="position: absolute; left: 0; z-index: 1;" /> -->
-            <img src="{{source_image_data}}" style="position: absolute; left: 0;" />
+            <img src="{{source_image_data}}" style="position: absolute; left: 0; width: 100%" />
         </div>
+
+        <script type="text/javascript">
+            svg = document.getElementsByTagName("svg")[0];
+            width = svg.getAttribute("width");
+            height = svg.getAttribute("height");
+            svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+            svg.setAttribute("width", "100%");
+            svg.setAttribute("height", "100%");
+        </script>
         {% else %}
         <small>
             To use this tool, please add a search query above!
