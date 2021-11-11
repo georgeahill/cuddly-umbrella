@@ -41,7 +41,11 @@ def index(page=None):
     if not page_obj:
         return render_template("index.html", error="Page not found boo! Try again xoxo")
 
-    if "thumbnail" in page_obj and page_obj["thumbnail"] is not None and "url" in page_obj["thumbnail"]:
+    if (
+        "thumbnail" in page_obj
+        and page_obj["thumbnail"] is not None
+        and "url" in page_obj["thumbnail"]
+    ):
         image_url = "http:" + page_obj["thumbnail"]["url"]
         image_req = requests.get(image_url)
         if image_req.status_code != 200:
@@ -100,11 +104,27 @@ def index(page=None):
                     "image_height": page_obj["thumbnail"]["height"],
                 },
             )
+            if r.status_code != 200:
+                r = requests.post(
+                    "http://localhost:5000/no_mask",
+                    json={
+                        "wikitext": text,
+                        "image_width": page_obj["thumbnail"]["width"],
+                        "image_height": page_obj["thumbnail"]["height"],
+                    },
+                )
         else:
-            r = requests.post("http://localhost:5000/no_mask", json={"wikitext": text})
+            r = requests.post(
+                "http://localhost:5000/no_mask",
+                json={
+                    "wikitext": text,
+                    "no_image": True
+                },
+            )
         image_data = r.text
         error = None
-    except:
+    except Exception as ex:
+        print(ex)
         image_data = None
         error = "Something went wrong generating the wordcloud"
 

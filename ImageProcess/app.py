@@ -48,6 +48,22 @@ class ImageProcess(Resource):
         img[:,:,1] = thresh[:,:]
         img[:,:,2] = thresh[:,:]
 
+        count_true = 0
+        total_count = 0
+        for row in img:
+            for cell in row:
+                total_count += 1
+                if cell[0] == 255:
+                    count_true += 1
+
+        if count_true < total_count / 2:
+            for row in range(img.shape[0]):
+                for cell in range(img.shape[1]):
+                    if img[row][cell][0] == 255:
+                        img[row][cell][:] = 0
+                    else:
+                        img[row][cell][:] = 255
+
         cv2.imwrite('test.png', img)
 
         return {"mask": img.tolist()}

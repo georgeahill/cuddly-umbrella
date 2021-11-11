@@ -59,9 +59,15 @@
 
         <a href="https://en.wikipedia.org/wiki/{{ page.key }}"><h2>{{ page.title }}</h2></a>
         <p>{{ page.description | safe }}</p>
+        {% if source_image_data[:4] != "data" %} 
         <small>
             Apologies for potentially low image quality! This is the best we can get from Wikipedia without significant extra effort. 
         </small>
+        {% else %} 
+        <small>
+            No image found for article! Please emjoy this colourful wordcloud instead :)
+        </small>
+        {% endif %}
         <div style="position: relative">
             <span width="100%" style="position: absolute; left: 0; z-index: 1; min-width: 100%;">
                 {% if image_data[:4] == "data" %}
@@ -70,7 +76,7 @@
                     {{ image_data | safe }}
                 {% endif %}
             </span>
-            <img src="{{source_image_data}}" style="position: absolute; left: 0; width: 100%; opacity: 75%;" />
+            <img src="{{source_image_data}}" style="position: absolute; left: 0; width: 100%; opacity: 70%;" />
         </div>
 
         <script type="text/javascript">

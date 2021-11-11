@@ -139,9 +139,32 @@ stopwords = [
     "now",
     "www",
     "http",
+    "https",
+    "http",
+    "org",
+    "com",
+    "net",
+    "jpg",
+    "edu",
+    "pdf",
+    "png",
+    "infobox",
+    "url",
+    "file",
+    "web",
+    "cite",
+    "journal",
+    "id",
+    "ogg",
+    "XML",
+    
 ]
 
 app = Flask(__name__)
+
+
+def colorfunc(*args, **kwargs):
+    return 'hsl(0, 0, 0)'
 
 
 @app.route("/no_mask", methods=["POST"])
@@ -174,17 +197,30 @@ def wordcloud_no_mask():
     )
 
     # generate the word cloud from text
-    cloud = WordCloud(
-        font_path=os.getcwd() + "/Avenir Regular/Avenir Regular.ttf",
-        width=imagewidth,
-        height=imageheight,
-        max_words=max_words,
-        colormap="cool",
-        background_color="#282828",
-        stopwords=stopwords,
-        collocations=False,
-        min_word_length=2,
-    ).generate_from_text(cleanedInput)
+    if "no_image" in data:
+        cloud = WordCloud(
+            font_path=os.getcwd() + "/Avenir Regular/Avenir Regular.ttf",
+            width=imagewidth,
+            height=imageheight,
+            max_words=max_words,
+            colormap = "cool",
+            background_color="#282828",
+            stopwords=stopwords,
+            collocations=False,
+            min_word_length=2,
+        ).generate_from_text(cleanedInput)
+    else:
+        cloud = WordCloud(
+            font_path=os.getcwd() + "/Avenir Regular/Avenir Regular.ttf",
+            width=imagewidth,
+            height=imageheight,
+            max_words=max_words,
+            color_func=colorfunc,
+            background_color="#282828",
+            stopwords=stopwords,
+            collocations=False,
+            min_word_length=2,
+        ).generate_from_text(cleanedInput)
 
     # Put this into an image file
     im = cloud.to_svg(embed_font=True)
@@ -224,7 +260,7 @@ def wordcloud_mask():
     )
 
     # create a variable to store the colourway from the image mask
-    colors = ImageColorGenerator(mask)
+    # colors = ImageColorGenerator(mask)
 
     # generate the word cloud from text
     cloud = WordCloud(
@@ -235,7 +271,7 @@ def wordcloud_mask():
         stopwords=stopwords,
         mask=mask,
         background_color=None,
-        color_func=colors,
+        color_func=colorfunc,
         collocations=False,
         contour_width=5,
         contour_color="black",
