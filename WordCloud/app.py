@@ -9,7 +9,7 @@ import os
 
 
 # Define a list of stop words
-stopwords = [
+stopwords = set([
     "i",
     "me",
     "my",
@@ -157,8 +157,8 @@ stopwords = [
     "id",
     "ogg",
     "XML",
-    
-]
+    "html"
+])
 
 app = Flask(__name__)
 
