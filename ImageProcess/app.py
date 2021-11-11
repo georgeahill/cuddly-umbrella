@@ -5,6 +5,7 @@ import numpy as np
 import cv2
 import scipy
 import scipy.stats
+import logging
 
 app = Flask(__name__)
 api = Api(app)
@@ -73,3 +74,7 @@ api.add_resource(ImageProcess, "/")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5001", debug=True)
+else:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)

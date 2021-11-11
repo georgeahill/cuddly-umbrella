@@ -6,6 +6,7 @@ import base64
 from io import BytesIO
 import numpy as np
 import os
+import logging
 
 
 # Define a list of stop words
@@ -283,3 +284,8 @@ def wordcloud_mask():
 
     # return this string to the client
     return im
+
+if __name__ != '__main__':
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)

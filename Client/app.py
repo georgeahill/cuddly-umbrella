@@ -3,6 +3,7 @@ from flask.helpers import send_from_directory
 import requests
 from bs4 import BeautifulSoup
 import re
+import logging
 
 app = Flask(__name__)
 
@@ -46,8 +47,10 @@ def index(page=None):
         and page_obj["thumbnail"] is not None
         and "url" in page_obj["thumbnail"]
     ):
-        image_url = "http:" + page_obj["thumbnail"]["url"]
-        image_req = requests.get(image_url)
+        image_url = "https:" + page_obj["thumbnail"]["url"]
+        headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
+        image_req = requests.get(image_url, headers=headers)
+        app.logger.debug(image_url, image_req)
         if image_req.status_code != 200:
             image = None
         else:
@@ -90,13 +93,13 @@ def index(page=None):
 
     try:
         if image:
-            r = requests.post("http://localhost:5001/", files={"data": image})
+            r = requests.post("http://imageprocess:8000/", files={"data": image})
             # reconcile formats here
             image_data = r.json()["mask"]
             # image_data_clean = [[cell, cell, cell] for row in image_data for cell in row]
 
             r = requests.post(
-                "http://localhost:5000/mask",
+                "http://wordcloud:8000/mask",
                 json={
                     "wikitext": text,
                     "mask": image_data,
@@ -106,7 +109,7 @@ def index(page=None):
             )
             if r.status_code != 200:
                 r = requests.post(
-                    "http://localhost:5000/no_mask",
+                    "http://wordcloud:8000/no_mask",
                     json={
                         "wikitext": text,
                         "image_width": page_obj["thumbnail"]["width"],
@@ -115,7 +118,7 @@ def index(page=None):
                 )
         else:
             r = requests.post(
-                "http://localhost:5000/no_mask",
+                "http://wordcloud:8000/no_mask",
                 json={
                     "wikitext": text,
                     "no_image": True
@@ -139,3 +142,7 @@ def index(page=None):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="8080", debug=True)
+else:
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)

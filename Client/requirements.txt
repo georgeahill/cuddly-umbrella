@@ -1,2 +1,4 @@
 flask-restful
 beautifulsoup4
+gunicorn
+requests
