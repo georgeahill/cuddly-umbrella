@@ -69,14 +69,14 @@
         </small>
         {% endif %}
         <div style="position: relative">
-            <span width="100%" style="position: absolute; left: 0; z-index: 1; min-width: 100%;">
+            <span width="50%" style="position: absolute; left: 0; z-index: 1; min-width: 50%;">
                 {% if image_data[:4] == "data" %}
                     <img src="{{image_data}}" />
                 {% else %}
                     {{ image_data | safe }}
                 {% endif %}
             </span>
-            <img src="{{source_image_data}}" style="position: absolute; left: 0; width: 100%; opacity: 70%;" />
+            <img src="{{source_image_data}}" style="position: absolute; left: 0; width: 50%; opacity: 70%;" />
         </div>
 
         <script type="text/javascript">

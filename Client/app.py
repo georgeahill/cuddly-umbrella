@@ -25,19 +25,16 @@ def index(page=None):
         # "/"
         return render_template("index.html")
 
+    headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
     # Call wikipedia - get text
     r = requests.get(
-        f"https://en.wikipedia.org/w/rest.php/v1/search/page?q={page}&limit=1"
+        f"https://en.wikipedia.org/w/rest.php/v1/search/page?q={page}&limit=1",
+        headers=headers
     )
     try:
         page_obj = r.json()["pages"][0]
     except:
         return render_template("index.html", error="Page not found boo! Try again xoxo")
-
-    # get images
-    page_files = requests.get(
-        f"https://en.wikipedia.org/w/rest.php/v1/page/{page_obj['title']}/links/media"
-    )
 
     if not page_obj:
         return render_template("index.html", error="Page not found boo! Try again xoxo")
@@ -48,9 +45,8 @@ def index(page=None):
         and "url" in page_obj["thumbnail"]
     ):
         image_url = "https:" + page_obj["thumbnail"]["url"]
-        headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
         image_req = requests.get(image_url, headers=headers)
-        app.logger.debug(image_url, image_req)
+        # app.logger.debug(image_url, image_req)
         if image_req.status_code != 200:
             image = None
         else:
@@ -66,7 +62,7 @@ def index(page=None):
     if page_obj["description"] is None:
         page_obj["description"] = "<em>Description not available</em>"
 
-    r = requests.get(f"https://en.wikipedia.org/w/rest.php/v1/page/{page_title}")
+    r = requests.get(f"https://en.wikipedia.org/w/rest.php/v1/page/{page_title}", headers=headers)
 
     source = r.json()["source"]
     soup = BeautifulSoup(source, features="html.parser")
@@ -93,38 +89,40 @@ def index(page=None):
 
     try:
         if image:
-            r = requests.post("http://imageprocess:8000/", files={"data": image})
+            r = requests.post("http://imageprocess:8000/process", files={"data": image})
             # reconcile formats here
             image_data = r.json()["mask"]
             # image_data_clean = [[cell, cell, cell] for row in image_data for cell in row]
 
             r = requests.post(
-                "http://wordcloud:8000/mask",
+                "http://wordcloud:8000/wordcloud",
                 json={
                     "wikitext": text,
                     "mask": image_data,
                     "image_width": page_obj["thumbnail"]["width"],
                     "image_height": page_obj["thumbnail"]["height"],
+                    "state": "mask",
                 },
             )
             if r.status_code != 200:
                 r = requests.post(
-                    "http://wordcloud:8000/no_mask",
+                    "http://wordcloud:8000/wordcloud",
                     json={
                         "wikitext": text,
                         "image_width": page_obj["thumbnail"]["width"],
                         "image_height": page_obj["thumbnail"]["height"],
+                        "state": "no_mask",
                     },
                 )
         else:
             r = requests.post(
-                "http://wordcloud:8000/no_mask",
+                "http://wordcloud:8000/wordcloud",
                 json={
                     "wikitext": text,
-                    "no_image": True
+                    "state": "no_image",
                 },
             )
-        image_data = r.text
+        image_data = r.json()['cloud']
         error = None
     except Exception as ex:
         print(ex)
