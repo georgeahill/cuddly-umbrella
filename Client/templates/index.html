@@ -57,8 +57,8 @@
 
         {% if image_data %}
 
-        <a href="https://en.wikipedia.org/wiki/{{ page.key }}"><h2>{{ page.title }}</h2></a>
-        <p>{{ page.description | safe }}</p>
+        <a href="https://en.wikipedia.org/wiki/{{ key }}"><h2>{{ title }}</h2></a>
+        <p>{{ description | safe }}</p>
         {% if source_image_data[:4] != "data" %} 
         <small>
             Apologies for potentially low image quality! This is the best we can get from Wikipedia without significant extra effort. 
