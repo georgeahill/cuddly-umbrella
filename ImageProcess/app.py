@@ -65,8 +65,6 @@ class ImageProcess(Resource):
                     else:
                         img[row][cell][:] = 255
 
-        cv2.imwrite('test.png', img)
-
         return {"mask": img.tolist()}
 
 
