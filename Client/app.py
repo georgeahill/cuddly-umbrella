@@ -62,7 +62,7 @@ def index(page=None):
     # Get all wiki data from search
     try:
         title, key, description, text, image, image_url, width, height = connection_helper.get_wikipedia_data(page)
-    except ConnectionHelperException:
+    except:
         return render_template('index.html', error="Page not found boo! Try again xoxo")
 
 
