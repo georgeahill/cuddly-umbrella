@@ -57,7 +57,7 @@ class ImageProcess(Resource):
                 if cell[0] == 255:
                     count_true += 1
 
-        if count_true > total_count / 2:
+        if count_true < total_count / 2:
             for row in range(img.shape[0]):
                 for cell in range(img.shape[1]):
                     if img[row][cell][0] == 255:
@@ -70,7 +70,7 @@ class ImageProcess(Resource):
         return {"mask": img.tolist()}
 
 
-api.add_resource(ImageProcess, "/process")
+api.add_resource(ImageProcess, "/threshold/create")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5001", debug=True)

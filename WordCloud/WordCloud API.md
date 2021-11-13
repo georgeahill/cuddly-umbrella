@@ -11,7 +11,7 @@ string containing WordCloud image in Base64 format
 
 ### Params:
 
-**wikitext** - _(Required)_ The text from which to build the wordcloud
+**text** - _(Required)_ The text from which to build the wordcloud
 
 **image_width** - The width (in pixels) of the wordcloud to return (default 500)
 
@@ -28,7 +28,7 @@ string containing WordCloud image in Base64 format
 
 ### Params:
 
-**wikitext** - _(Required)_ The text from which to build the wordcloud
+**text** - _(Required)_ The text from which to build the wordcloud
 
 **mask** - _(Required)_ A bitmap array of the mask image
 

@@ -89,7 +89,7 @@ def index(page=None):
 
     try:
         if image:
-            r = requests.post("http://imageprocess:8000/process", files={"data": image})
+            r = requests.post("http://imageprocess:8000/threshold/create", files={"data": image})
             # reconcile formats here
             image_data = r.json()["mask"]
             # image_data_clean = [[cell, cell, cell] for row in image_data for cell in row]
@@ -97,7 +97,7 @@ def index(page=None):
             r = requests.post(
                 "http://wordcloud:8000/wordcloud",
                 json={
-                    "wikitext": text,
+                    "text": text,
                     "mask": image_data,
                     "image_width": page_obj["thumbnail"]["width"],
                     "image_height": page_obj["thumbnail"]["height"],
@@ -108,7 +108,7 @@ def index(page=None):
                 r = requests.post(
                     "http://wordcloud:8000/wordcloud",
                     json={
-                        "wikitext": text,
+                        "text": text,
                         "image_width": page_obj["thumbnail"]["width"],
                         "image_height": page_obj["thumbnail"]["height"],
                         "state": "no_mask",
@@ -118,7 +118,7 @@ def index(page=None):
             r = requests.post(
                 "http://wordcloud:8000/wordcloud",
                 json={
-                    "wikitext": text,
+                    "text": text,
                     "state": "no_image",
                 },
             )

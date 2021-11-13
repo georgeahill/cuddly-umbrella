@@ -12,7 +12,7 @@ app = Flask(__name__)
 api = Api(app)
 
 parser = reqparse.RequestParser()
-parser.add_argument("wikitext", type=str, location="json", required=True, help="{error_msg}")
+parser.add_argument("text", type=str, location="json", required=True, help="{error_msg}")
 parser.add_argument("state", type=str, location="json", required=True, choices=('mask', 'no_mask', 'no_image'), help="{error_msg}")
 parser.add_argument("mask", type=list, location="json", help="{error_msg}")
 parser.add_argument("image_width", type=int, location="json", help="{error_msg}", default=500)
@@ -53,7 +53,7 @@ class WordCloudResource(Resource):
                 \ *           # plus zero or more copies of a space,
                 """,
             " ",  # and replace it with a single space
-            args['wikitext'],
+            args['text'],
             flags=re.VERBOSE,
         )
 
